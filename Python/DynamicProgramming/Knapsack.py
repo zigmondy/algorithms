@@ -5,8 +5,8 @@ weightAndValues = [
 	[4, 5],
 	[5, 7]
 ]
-
 targetWeight = 7
+
 matrix = []
 numOfRows = len(weightAndValues)
 numOfColumns = targetWeight + 1
@@ -34,11 +34,20 @@ for rowIndex in range(0, numOfRows, 1):
 			# Max
 			row.append(max(option1, option2))
 
-# Print the matrix
+# Print the input
+print("Input:")
 for rowIndex in range(0, numOfRows, 1):
-	print(matrix[rowIndex])
-
+    print("[{}g ${}]".format(weightAndValues[rowIndex][0], weightAndValues[rowIndex][1]))
+# Print the generated matrix
+print("Generated Matrix:")
+for rowIndex in range(0, numOfRows, 1):
+    buffer = "["
+    for columnIndex in range(0, numOfColumns, 1):
+	    buffer = buffer + "${} ".format(matrix[rowIndex][columnIndex])
+    buffer = buffer.rstrip() + "]"
+    print(buffer)
 # Now find the optimal weights
+print("Solution:")
 rowIndex = numOfRows - 1
 columnIndex = numOfColumns - 1
 remainingWeight = targetWeight
@@ -50,7 +59,7 @@ while rowIndex >= 0:
     if valueAtCurrentSpot == valueAtRowAbove:
         rowIndex = rowIndex - 1 # value was copied from above
     else:
-        print("Optimal Weight/Value = ", weightAndValues[rowIndex])
+        print("[{}g ${}]".format(weightAndValues[rowIndex][0], weightAndValues[rowIndex][1]))
         remainingWeight = remainingWeight - weightAndValues[rowIndex][0]
         if remainingWeight == 0:
             break;
