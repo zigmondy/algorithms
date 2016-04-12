@@ -23,18 +23,18 @@ def CreateMatrix():
             if currentTotalLength == 0:
                 row.append(0)
             else:
-                # LHS candidate for max
-                previousRowValue = matrix[rowIndex - 1][columnIndex] if rowIndex > 0 else 0
+                # LHS candidate for max (previous row value)
+                option1 = matrix[rowIndex - 1][columnIndex] if rowIndex > 0 else 0
                 # RHS candidate for max
-                currentRowValue = 0;
+                option2 = 0;
                 if currentTotalLength >= referenceLength:
-                    currentRowValue = currentRowValue + referenceValue
-                # Add the value of remaining maximized length
+                    option2 = referenceValue
+                # Add the value of remaining maximized length (reuse the sub-problem)
                 previousColumnIndex = columnIndex - referenceLength
                 if previousColumnIndex > 0:
-                    currentRowValue = currentRowValue + matrix[rowIndex][previousColumnIndex]
+                    option2 = option2 + matrix[rowIndex][previousColumnIndex]
                 # Take max
-                maxValue = currentRowValue if currentRowValue > previousRowValue else previousRowValue
+                maxValue = option2 if option2 > option1 else option1
                 row.append(maxValue)
 
 def PrintMatrix():
