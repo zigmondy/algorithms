@@ -1,6 +1,6 @@
-def printMatrix(m, label="Matrix - {0} x {1} - {2} x {3}:", r="", c="", symbol=""):
+def printMatrix(m, label="", r="", c="", symbol=""):
     print("-----------------------------------")
-    print(label.format(len(m), len(m[0]), r, c))
+    print("{0} - {1} x {2} - {3} x {4}:".format(label, len(m), len(m[0]), r, c))
     print("-----------------------------------")
     for rowIndex in range(len(m)):
         buffer = ""
