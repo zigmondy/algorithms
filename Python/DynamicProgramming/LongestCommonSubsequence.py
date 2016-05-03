@@ -1,9 +1,10 @@
+import Common
+
 word1 = ['a', 'b', 'c', 'd', 'a', 'f']
 word2 = ['a', 'c', 'b', 'c', 'f']
 
 columns = len(word1) + 1
 rows = len(word2) + 1
-print("rows={0}, columns={1}".format(rows, columns))
 m = [[0 for _ in range(columns)] for _ in range(rows)]
 
 for row in range(1, rows):
@@ -16,13 +17,10 @@ for row in range(1, rows):
             m[row][column] = diagonal + 1
         else:
             # Max of previous column or row
-            m[row][column] = max(m[row][column - 1], m[row - 1][column]) 
+            m[row][column] = max(m[row][column - 1], m[row - 1][column])
 
-print("matrix:")
-for row in range(rows):
-    print(m[row])
-
-print("common subsequence:")
+Common.printMatrix(m)
+seq = []
 column = columns - 1
 row = rows - 1
 while column > 0 and row > 0:
@@ -35,6 +33,9 @@ while column > 0 and row > 0:
    elif current == prevRow:
       row = row - 1
    elif current == prevDiagonal + 1:
-      print(word1[column - 1])
+      seq.append(word1[column - 1])
       column = column - 1
       row = row - 1
+
+print("common subsequence:")
+print(seq)
