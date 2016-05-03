@@ -18,5 +18,23 @@ for row in range(1, rows):
             # Max of previous column or row
             m[row][column] = max(m[row][column - 1], m[row - 1][column]) 
 
+print("matrix:")
 for row in range(rows):
     print(m[row])
+
+print("common subsequence:")
+column = columns - 1
+row = rows - 1
+while column > 0 and row > 0:
+   current = m[row][column]
+   prevRow = m[row - 1][column]
+   prevColumn = m[row][column - 1]
+   prevDiagonal = m[row - 1][column - 1]
+   if current == prevColumn:
+      column = column - 1
+   elif current == prevRow:
+      row = row - 1
+   elif current == prevDiagonal + 1:
+      print(word1[column - 1])
+      column = column - 1
+      row = row - 1
