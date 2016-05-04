@@ -15,7 +15,7 @@ solution = []
 numOfRows = len(referenceLengthAndValues)
 numOfColumns = targetLength + 1
 
-def CreateMatrix():
+def computeMatrix():
     for rowIndex in range(0, numOfRows, 1):
         row = []
         matrix.append(row)
@@ -60,7 +60,7 @@ def backtrack():
     
 print("Target length = {0}".format(targetLength))
 Common.printMatrix(referenceLengthAndValues, label="Input matrix", r="first column length", c="second column price")
-CreateMatrix()
+computeMatrix()
 Common.printMatrix(matrix, label="Generated matrix", r="input length and price", c="target length", symbol="$")
 backtrack()
 Common.printMatrix(solution, label="Solution matrix", r="first column length", c="second column price")
