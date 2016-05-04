@@ -7,12 +7,12 @@ s = [[0 for _ in range(length)] for _ in range(length)]
 
 def computeMatrix():
     for currentLength in range(length):
-        print("Length={0}".format(currentLength))
+        # print("Length={0}".format(currentLength))
         for i in range(0, length - currentLength, 1):
             j = i + currentLength
-            print("{0},{1}".format(i, j))
+            # print("{0},{1}".format(i, j))
             for k in range(i, j, 1):
-                print("   k={0}".format(k))
+                # print("   k={0}".format(k))
                 num = m[i][k] + m[k+1][j] + p[i]*p[k + 1]*p[j + 1]
                 if (m[i][j] == 0 or num < m[i][j]):
                     m[i][j] = num

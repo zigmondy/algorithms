@@ -1,3 +1,5 @@
+import Common
+
 # e.g. 1cm = $2
 referenceLengthAndValues = [
 	[1, 2],
@@ -37,14 +39,6 @@ def CreateMatrix():
                 maxValue = option2 if option2 > option1 else option1
                 row.append(maxValue)
 
-def PrintMatrix():
-    print("Generated Matrix:")
-    for rowIndex in range(0, numOfRows, 1):
-        buffer = ""
-        for columnIndex in range(0, numOfColumns, 1):
-	        buffer = buffer + "${} ".format(matrix[rowIndex][columnIndex])
-        buffer = "[" + buffer.rstrip() + "]"
-        print(buffer)
-
+Common.printMatrix(referenceLengthAndValues, label="Input matrix", r="first column length", c="second column price")
 CreateMatrix()
-PrintMatrix()
+Common.printMatrix(matrix, label="Generated matrix", r="input length and price", c="target length", symbol="$")
