@@ -11,6 +11,7 @@ referenceLengthAndValues = [
 targetLength = 5
 
 matrix = []
+solution = []
 numOfRows = len(referenceLengthAndValues)
 numOfColumns = targetLength + 1
 
@@ -26,9 +27,12 @@ def CreateMatrix():
                 row.append(0)
             else:
                 # LHS candidate for max (previous row value)
-                option1 = matrix[rowIndex - 1][columnIndex] if rowIndex > 0 else 0
+                option1 = 0
+                if rowIndex > 0:
+                    option1 = matrix[rowIndex - 1][columnIndex]
+                
                 # RHS candidate for max
-                option2 = 0;
+                option2 = 0
                 if currentTotalLength >= referenceLength:
                     option2 = referenceValue
                 # Add the value of remaining maximized length (reuse the sub-problem)
@@ -36,9 +40,27 @@ def CreateMatrix():
                 if previousColumnIndex > 0:
                     option2 = option2 + matrix[rowIndex][previousColumnIndex]
                 # Take max
-                maxValue = option2 if option2 > option1 else option1
+                maxValue = max(option1, option2)
                 row.append(maxValue)
 
+def backtrack():
+    row = numOfRows - 1
+    column = numOfColumns - 1
+    while column >= 0 and row >= 0:
+        currentRowValue = matrix[row][column]
+        previousRowValue = matrix[row - 1][column] if row - 1 >= 0 else 0
+        previousColumnValue = matrix[row][column - 1] if column >= 0 else 0
+        if currentRowValue == previousRowValue:
+            row = row - 1    
+        else:
+            # pick the current row in solution
+            solution.append(referenceLengthAndValues[row])
+            # subtract column by current length
+            column = column - referenceLengthAndValues[row][0]
+    
+print("Target length = {0}".format(targetLength))
 Common.printMatrix(referenceLengthAndValues, label="Input matrix", r="first column length", c="second column price")
 CreateMatrix()
 Common.printMatrix(matrix, label="Generated matrix", r="input length and price", c="target length", symbol="$")
+backtrack()
+Common.printMatrix(solution, label="Solution matrix", r="first column length", c="second column price")
