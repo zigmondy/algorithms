@@ -1,17 +1,19 @@
 import Common;
 
-inputDocument = "The quick brown fox jump over the lazy dog."
+inputDocument = "The quick brown fox jumped over the lazy dog."
 documentLength = len(inputDocument)
 shingleLength = 10
 shingles = []
 
 def createShingles():
     beginIndex = 0;
-    endIndex = beginIndex + shingleLength - 1;
-    while endIndex <= documentLength:
-        shingles.append(inputDocument[beginIndex:endIndex])
+    endSliceIndex = beginIndex + shingleLength;
+    while endSliceIndex <= documentLength:
+        # Slice ends at n-1 in python
+        shingles.append(inputDocument[beginIndex:endSliceIndex])
         beginIndex = beginIndex + 1
-        endIndex = beginIndex + shingleLength - 1;
+        endSliceIndex = beginIndex + shingleLength;
 
+print(documentLength)
 createShingles()
 Common.printVector(shingles)
