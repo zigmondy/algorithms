@@ -60,3 +60,8 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+/CSharp/Lsh/src/Lsh/obj/Debug/netcoreapp1.0
+/CSharp/Lsh/src/Lsh/bin/Debug/netcoreapp1.0
+/CSharp/Lsh/.vs/restore.dg
+/CSharp/Lsh/.vs/Lsh/v14/.suo
+*.user
