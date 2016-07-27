@@ -5,33 +5,34 @@
 
     public static class ShingleCreator
     {
-        private const int ShingleLength = 10;
+        private const int ShingleLength = 20;
 
-        public static HashSet<int> GetShingles(string document)
+        public static void CreateShingles(Candidate candidate)
         {
-            if (document == null)
+            if (candidate == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("candidate");
             }
 
-            int documentLength = document.Length;
-            HashSet<string> shingles = new HashSet<string>();
-            HashSet<int> hashedShingles = new HashSet<int>();
+            if (candidate.InputText == null)
+            {
+                throw new ArgumentException("candidate.InputText");
+            }
+
+            int documentLength = candidate.InputText.Length;
+            candidate.Shingles = new HashSet<string>();
+            candidate.HashedShingles = new HashSet<int>();
 
             int beginIndex = 0;
             int endIndex = ShingleLength - 1;
-
             while (endIndex < documentLength)
             {
-                string shingle = document.Substring(beginIndex, ShingleLength);
-                shingles.Add(shingle);
-                hashedShingles.Add(shingle.GetHashCode());
+                string shingle = candidate.InputText.Substring(beginIndex, ShingleLength);
+                candidate.Shingles.Add(shingle);
+                candidate.HashedShingles.Add(shingle.GetHashCode());
                 beginIndex++;
                 endIndex = beginIndex + ShingleLength - 1;
             }
-
-            Console.WriteLine(string.Join("\n", shingles));
-            return hashedShingles;
         }
     }
 }
