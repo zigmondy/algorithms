@@ -65,3 +65,6 @@ target/
 /CSharp/Lsh/.vs/restore.dg
 /CSharp/Lsh/.vs/Lsh/v14/.suo
 *.user
+/CSharp-Windows/Lsh/Lsh/bin/Debug
+/CSharp-Windows/Lsh/Lsh/obj/Debug
+/CSharp-Windows/Lsh/.vs/Lsh/v14/.suo
