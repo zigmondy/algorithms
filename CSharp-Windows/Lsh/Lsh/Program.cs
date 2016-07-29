@@ -21,20 +21,20 @@
                 },
                 new Candidate
                 {
-                    InputText = "Brown fox jumped over the dog."
+                    InputText = "Brown fox jumped over the lazy pig."
                 },
                 new Candidate
                 {
                     InputText = "Red fox jumped the lazy cat."
                 },
-                //new Candidate
-                //{
-                //    InputText = "Brown fox jumped late."
-                //},
-                //new Candidate
-                //{
-                //    InputText = "Brown fox jumped over the lazy donkey."
-                //},
+                new Candidate
+                {
+                    InputText = "Brown fox jumped late."
+                },
+                new Candidate
+                {
+                    InputText = "Brown fox jumped over the lazy donkey."
+                },
             };
 
             // Prepare universal set of shingles
@@ -77,7 +77,7 @@
                 {
                     Candidate candidate = candidates[column];
                     boolMatrix[row, column] = candidate.BoolVectorFromUniversalSet[row];
-                    Console.Write(string.Format("{0} ", boolMatrix[row, column]));
+                    Console.Write("{0} ", boolMatrix[row, column]);
                 }
 
                 Console.Write(Environment.NewLine);
@@ -90,7 +90,7 @@
                 {
                     Candidate candidate = candidates[column];
                     stringMatrix[row, column] = candidate.StringVectorFromUniversalSet[row];
-                    Console.Write(string.Format("{0} ", stringMatrix[row, column]));
+                    Console.Write("{0} ", stringMatrix[row, column]);
                 }
 
                 Console.Write(Environment.NewLine);
@@ -145,45 +145,61 @@
                 GetSignatureSimilarity(signatureMatrix.GetColumns(0), signatureMatrix.GetColumns(3))));
 
             // Now do the naive LSH
-            int rowsInABand = 20;
+            int rowsInABand = 4;
             int numberOfBands = numberOfHashFunctions / rowsInABand;
-            List<SimilarValue> reverseMapping = new List<SimilarValue>();
+            List<SimilarValue> similarValues = new List<SimilarValue>();
 
             int currentRow = 0;
             for (int band = 0; band < numberOfBands; band++)
             {
-                int upperRowLimit = currentRow + rowsInABand;
-                for (; currentRow < upperRowLimit; currentRow++)
+                int upperRowLimitForBand = currentRow + rowsInABand;
+                for (; currentRow < upperRowLimitForBand; currentRow++)
                 {
                     for (int column = 0; column < columns; column++)
                     {
                         int currentValue = signatureMatrix[currentRow, column];
-                        reverseMapping.Add(new SimilarValue
+                        similarValues.Add(new SimilarValue
                         {
                             HashCode = currentValue,
-                            BandNumber = band,
+                            BandIndex = band,
                             ColumnIndex = column,
                         });
                     }
                 }
             }
 
-            Dictionary<string, List<SimilarValue>> similarColumnsInBand = new Dictionary<string, List<SimilarValue>>();
-            foreach (IEnumerable<SimilarValue> band in reverseMapping.GroupBy(_ => _.BandNumber))
+            Dictionary<string, List<SimilarValue>> bandValues = new Dictionary<string, List<SimilarValue>>();
+            foreach (IEnumerable<SimilarValue> currentBandValues in similarValues.GroupBy(_ => _.BandIndex))
             {
-                foreach (IEnumerable<SimilarValue> columnsInBand in band.GroupBy(_ => _.ColumnIndex))
+                foreach (IEnumerable<SimilarValue> columnsInCurrentBand in currentBandValues.GroupBy(_ => _.ColumnIndex))
                 {
-                    string columnSignature = string.Join(",", columnsInBand.Select(_ => _.HashCode).OrderByDescending(_ => _));
+                    string columnSignature = string.Join(",", columnsInCurrentBand.Select(_ => _.HashCode).OrderByDescending(_ => _));
                     List<SimilarValue> similarColumns;
-                    similarColumnsInBand.TryGetValue(columnSignature, out similarColumns);
+                    bandValues.TryGetValue(columnSignature, out similarColumns);
                     if (similarColumns == null)
                     {
                         similarColumns = new List<SimilarValue>();
                     }
 
-                    similarColumns.AddRange(columnsInBand);
-                    similarColumnsInBand[columnSignature] = similarColumns;
+                    similarColumns.AddRange(columnsInCurrentBand);
+                    bandValues[columnSignature] = similarColumns;
                 }
+            }
+
+            HashSet<string> finalSet = new HashSet<string>();
+            foreach (KeyValuePair<string, List<SimilarValue>> bandValue in bandValues)
+            {
+                List<int> uniqueColumns = bandValue.Value.Select(_ => _.ColumnIndex).Distinct().OrderBy(_ => _).ToList();
+                if (uniqueColumns.Count > 1)
+                {
+                    finalSet.Add(string.Join(", ", uniqueColumns));
+                }
+            }
+
+            Console.WriteLine("Similar Columns:");
+            foreach (string finalItem in finalSet)
+            {
+                Console.WriteLine(finalItem);
             }
         }
 
@@ -240,7 +256,7 @@
         private class SimilarValue
         {
             public int HashCode { get; set; }
-            public int BandNumber { get; set; }
+            public int BandIndex { get; set; }
             public int ColumnIndex { get; set; }
         }
     }
