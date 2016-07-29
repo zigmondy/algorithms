@@ -5,7 +5,7 @@
 
     public static class ShingleCreator
     {
-        private const int ShingleLength = 20;
+        private const int ShingleLength = 8;
 
         public static void CreateShingles(Candidate candidate)
         {

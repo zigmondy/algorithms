@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -17,24 +17,24 @@
                 },
                 new Candidate
                 {
-                    InputText = "Brown fox jumped over a tap."
+                    InputText = "Brown fox jumped over the lazy cow."
                 },
                 new Candidate
                 {
-                    InputText = "Brown fox over the jumped man."
+                    InputText = "Brown fox jumped over the dog."
                 },
                 new Candidate
                 {
-                    InputText = "Brown fox jumped over the lazy sheep."
+                    InputText = "Red fox jumped the lazy cat."
                 },
-                new Candidate
-                {
-                    InputText = "Brown fox jumped late."
-                },
-                new Candidate
-                {
-                    InputText = "Brown fox jumped over the lazy donkey."
-                },
+                //new Candidate
+                //{
+                //    InputText = "Brown fox jumped late."
+                //},
+                //new Candidate
+                //{
+                //    InputText = "Brown fox jumped over the lazy donkey."
+                //},
             };
 
             // Prepare universal set of shingles
@@ -132,6 +132,18 @@
                 Console.Write(Environment.NewLine);
             }
 
+            Console.WriteLine(string.Format(
+                "Jaccard Similarity = {0}, {1}, {2}",
+                GetJaccardSimilarity(boolMatrix.GetColumns(0), boolMatrix.GetColumns(1)),
+                GetJaccardSimilarity(boolMatrix.GetColumns(0), boolMatrix.GetColumns(2)),
+                GetJaccardSimilarity(boolMatrix.GetColumns(0), boolMatrix.GetColumns(3))));
+
+            Console.WriteLine(string.Format(
+                "Signature Similarity = {0}, {1}, {2}",
+                GetSignatureSimilarity(signatureMatrix.GetColumns(0), signatureMatrix.GetColumns(1)),
+                GetSignatureSimilarity(signatureMatrix.GetColumns(0), signatureMatrix.GetColumns(2)),
+                GetSignatureSimilarity(signatureMatrix.GetColumns(0), signatureMatrix.GetColumns(3))));
+
             // Now do the naive LSH
             int rowsInABand = 20;
             int numberOfBands = numberOfHashFunctions / rowsInABand;
@@ -156,18 +168,73 @@
                 }
             }
 
-            var mostSimilarColumns = reverseMapping
-                        .GroupBy(_ => _.HashCode)
-                        .ToDictionary(_ => _.Key, _ => _.ToList())
-                        .OrderByDescending(_ => _.Value.Count);
+            Dictionary<string, List<SimilarValue>> similarColumnsInBand = new Dictionary<string, List<SimilarValue>>();
+            foreach (IEnumerable<SimilarValue> band in reverseMapping.GroupBy(_ => _.BandNumber))
+            {
+                foreach (IEnumerable<SimilarValue> columnsInBand in band.GroupBy(_ => _.ColumnIndex))
+                {
+                    string columnSignature = string.Join(",", columnsInBand.Select(_ => _.HashCode).OrderByDescending(_ => _));
+                    List<SimilarValue> similarColumns;
+                    similarColumnsInBand.TryGetValue(columnSignature, out similarColumns);
+                    if (similarColumns == null)
+                    {
+                        similarColumns = new List<SimilarValue>();
+                    }
 
-            Console.WriteLine(
-                string.Join(
-                    ",",
-                    mostSimilarColumns.FirstOrDefault()
-                        .Value
-                        .Select(_ => _.ColumnIndex)
-                        .Distinct()));
+                    similarColumns.AddRange(columnsInBand);
+                    similarColumnsInBand[columnSignature] = similarColumns;
+                }
+            }
+        }
+
+        private static IList<T> GetColumns<T>(this T[,] array, int index)
+        {
+            int rows = array.GetLength(0);
+            List<T> list = new List<T>();
+            for (int i = 0; i < rows; i++)
+            {
+                list.Add(array[i, index]);
+            }
+
+            return list;
+        }
+
+        private static double GetSignatureSimilarity(IList<int> setA, IList<int> setB)
+        {
+            int matches = 0;
+            int total = setA.Count;
+
+            for (int row = 0; row < setA.Count; row++)
+            {
+                if (setA[row] == setB[row])
+                {
+                    matches++;
+                }
+            }
+
+            return Math.Round((double)matches * 100 / total, 2);
+        }
+
+        private static double GetJaccardSimilarity(IList<bool> setA, IList<bool> setB)
+        {
+            int intersection = 0;
+            int union = 0;
+
+            for (int row = 0; row < setA.Count; row++)
+            {
+                if (setA[row] == setB[row] && setA[row])
+                {
+                    intersection++;
+                }
+
+                if (setA[row] || setB[row])
+                {
+                    union++;
+                }
+            }
+
+
+            return Math.Round((double)intersection * 100 / union, 2);
         }
 
         private class SimilarValue
