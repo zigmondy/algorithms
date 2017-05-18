@@ -68,3 +68,6 @@ target/
 /CSharp-Windows/Lsh/Lsh/bin/Debug
 /CSharp-Windows/Lsh/Lsh/obj/Debug
 /CSharp-Windows/Lsh/.vs/Lsh/v14/.suo
+/CSharp-Windows/DP/DP/bin/Debug
+/CSharp-Windows/DP/DP/obj/Debug
+/CSharp-Windows/DP/.vs/DP/v14/.suo
